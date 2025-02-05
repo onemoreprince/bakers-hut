@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Baker's Hut Inventory</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <!-- Use a brown theme color -->
+  <meta name="theme-color" content="#8B4513" />
+  
+  <!-- HTMX library for progressive enhancement -->
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <!-- Supabase client library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header>
+    <h1>Baker's Hut Inventory</h1>
+    <nav>
+      <!-- Items Tab -->
+      <button id="items-tab"
+              hx-get="partials/items.html"
+              hx-target="#content"
+              hx-trigger="click">
+        Items
+      </button>
+      <!-- Stock In Tab -->
+      <button id="stockin-tab"
+              hx-get="partials/stockin.html"
+              hx-target="#content"
+              hx-trigger="click">
+        Stock In
+      </button>
+    </nav>
+  </header>
+  <main>
+    <!-- Login / auth section -->
+    <section id="auth-section">
+      <h2>Login</h2>
+      <form id="login-form">
+        <input type="email" id="email" placeholder="Enter your email" required />
+        <button type="submit">Send Magic Link</button>
+      </form>
+      <div id="login-message"></div>
+    </section>
+
+    <!-- HTMX will swap the “Items” or “Stock In” view into this container -->
+    <section id="content"></section>
+  </main>
+
+  <!-- Our application logic -->
+  <script src="main.js"></script>
+</body>
+</html>
