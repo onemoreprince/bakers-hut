@@ -31,14 +31,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     function showAuthSection() {
-        authSection.classList.remove('hidden');
-        contentSection.classList.add('hidden');
+        if (authSection && contentSection) {
+            authSection.style.display = 'block';
+            contentSection.style.display = 'none';
+        }
     }
 
     function showContentSection() {
-        authSection.classList.add('hidden');
-        contentSection.classList.remove('hidden');
-        htmx.ajax('GET', './views/sales.html', '#content');
+        if (authSection && contentSection) {
+            authSection.style.display = 'none';
+            contentSection.style.display = 'block';
+            htmx.ajax('GET', './views/sales.html', '#content');
+        }
     }
 
     if (loginForm) {
