@@ -1,0 +1,56 @@
+<div class="space-y-4">
+    <!-- Search and Filter -->
+    <div class="flex flex-col sm:flex-row gap-4">
+        <input type="text" 
+               placeholder="Search items..." 
+               class="input input-bordered w-full sm:w-64"
+               hx-trigger="keyup changed delay:500ms"
+               hx-get="/api/items/search"
+               hx-target="#items-list">
+        
+        <select class="select select-bordered w-full sm:w-48"
+                hx-get="/api/items/filter"
+                hx-target="#items-list">
+            <option value="">All Categories</option>
+            <option value="bread">Bread</option>
+            <option value="pastries">Pastries</option>
+            <option value="cakes">Cakes</option>
+        </select>
+    </div>
+
+    <!-- Items List -->
+    <div id="items-list" class="overflow-x-auto">
+        <table class="table table-zebra">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Items will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Item Button -->
+    <button class="btn btn-primary"
+            hx-get="/views/partials/item-form.html"
+            hx-target="#modal-content"
+            onclick="window.modal.showModal()">
+        Add New Item
+    </button>
+</div>
+
+<!-- Modal for Add/Edit -->
+<dialog id="modal" class="modal">
+    <form method="dialog" class="modal-box">
+        <div id="modal-content"></div>
+    </form>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog> 

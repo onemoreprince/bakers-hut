@@ -1,0 +1,39 @@
+<div class="space-y-4">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Sales</h2>
+        <button class="btn btn-primary" 
+                hx-get="/views/partials/sale-form.html" 
+                hx-target="#modal-content"
+                onclick="window.modal.showModal()">
+            New Sale
+        </button>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="sales-table-body">
+                <tr>
+                    <td colspan="4" class="text-center">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Add/Edit -->
+    <dialog id="modal" class="modal">
+        <form method="dialog" class="modal-box">
+            <div id="modal-content"></div>
+        </form>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+</div> 

@@ -1,55 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Baker's Hut Inventory</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json" />
-  <!-- Use a brown theme color -->
-  <meta name="theme-color" content="#8B4513" />
   
-  <!-- HTMX library for progressive enhancement -->
-  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-  <!-- Supabase client library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#8B4513" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  
+  <script src="/assets/external/tailwind.js"></script>
+  <link rel="stylesheet" href="/assets/external/daisyui.css" />
+  <script src="assets/external/htmx.min.js"></script>
 </head>
-<body>
-  <header>
-    <h1>Baker's Hut Inventory</h1>
-    <nav>
-      <!-- Items Tab -->
-      <button id="items-tab"
-              hx-get="partials/items.html"
-              hx-target="#content"
-              hx-trigger="click">
-        Items
-      </button>
-      <!-- Stock In Tab -->
-      <button id="stockin-tab"
-              hx-get="partials/stockin.html"
-              hx-target="#content"
-              hx-trigger="click">
-        Stock In
-      </button>
-    </nav>
-  </header>
-  <main>
-    <!-- Login / auth section -->
-    <section id="auth-section">
-      <h2>Login</h2>
-      <form id="login-form">
-        <input type="email" id="email" placeholder="Enter your email" required />
-        <button type="submit">Send Magic Link</button>
-      </form>
-      <div id="login-message"></div>
-    </section>
+<body class="min-h-screen bg-base-100">
+  <!-- Top Navbar -->
+  <div class="navbar bg-base-200 fixed top-0 z-50">
+    <div class="navbar-start">
+      <a class="btn btn-ghost normal-case text-xl">Baker's Hut</a>
+    </div>
+    <div class="navbar-center">
+      <h1 id="current-view" class="text-lg font-semibold">Sales</h1>
+    </div>
+    <div class="navbar-end">
+      <label class="swap swap-rotate">
+        <input type="checkbox" class="theme-controller" />
+        <span class="swap-on text-2xl">☀️</span>
+        <span class="swap-off text-2xl">🌑</span>
+      </label>
+    </div>
+  </div>
 
-    <!-- HTMX will swap the “Items” or “Stock In” view into this container -->
-    <section id="content"></section>
+  <!-- Main Content -->
+  <main class="container mx-auto p-4 mt-16 mb-20">
+    <!-- Auth Section -->
+    <div id="auth-section" class="card bg-base-200 shadow-xl max-w-md mx-auto">
+      <div class="card-body">
+        <h2 class="card-title">Login</h2>
+        <form id="login-form" class="form-control gap-4">
+          <input type="email" id="email" placeholder="Enter your email" class="input input-bordered" required />
+          <button type="submit" class="btn btn-primary">Send Magic Link</button>
+        </form>
+        <div id="login-message" class="alert hidden"></div>
+      </div>
+    </div>
+
+    <!-- Content Section -->
+    <section id="content" class="mt-8 hidden"></section>
   </main>
 
-  <!-- Our application logic -->
-  <script src="main.js"></script>
+  <!-- Bottom Navigation -->
+  <nav class="dock fixed bottom-0 bg-base-200 z-50 w-full">
+    <button hx-get="views/items.html" 
+            hx-target="#content" 
+            hx-indicator=".htmx-indicator"
+            class="htmx-request">
+        <span class="text-2xl">🛍️</span>
+        <span class="dock-label">Items</span>
+    </button>
+    <button hx-get="views/sales.html" hx-target="#content">
+        <span class="text-2xl">💰</span>
+        <span class="dock-label">Sales</span>
+    </button>
+    <button hx-get="views/restock.html" hx-target="#content">
+        <span class="text-2xl">📦</span>
+        <span class="dock-label">Stock</span>
+    </button>
+    <button hx-get="views/expenses.html" hx-target="#content">
+        <span class="text-2xl">💸</span>
+        <span class="dock-label">Expenses</span>
+    </button>
+    <button hx-get="views/reports.html" hx-target="#content">
+        <span class="text-2xl">📊</span>
+        <span class="dock-label">Reports</span>
+    </button>
+  </nav>
+
+  <!-- Loading indicator - Add opacity-0 by default and pointer-events-none -->
+  <div class="htmx-indicator fixed inset-0 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity">
+    <span class="loading loading-spinner text-secondary"></span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2.48.1/dist/umd/supabase.js"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <style>
+    .dock button {
+        cursor: pointer;
+        pointer-events: auto;
+    }
+    
+    .dock {
+        display: flex;
+        justify-content: space-around;
+        padding: 1rem;
+    }
+  </style>
+
 </body>
 </html>

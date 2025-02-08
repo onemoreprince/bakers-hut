@@ -1,32 +1,30 @@
-// service-worker.js
-
-const CACHE_NAME = 'bakers-hut-cache-v1';
-const urlsToCache = [
+const CACHE_NAME = 'bakers-hut-cache-v3.1';
+const ASSETS_TO_CACHE = [
   '/',
-  '/index.html',
-  '/style.css',
-  '/main.js',
-  '/manifest.json',
-  '/partials/items.html',
-  '/partials/stockin.html'
+  // '/index.html',
+  // '/assets/css/style.css',
+  // '/assets/js/main.js',
+  // '/manifest.json',
+  // '/views/sales.html',
+  // '/views/items.html',
+  // '/views/restock.html',
+  // '/views/expenses.html',
+  // '/views/reports.html'
 ];
 
+// During development, skip waiting and claim clients immediately
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
+// Implement network-first strategy with no caching during development
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return the cached file or fetch from network if not cached.
-        return response || fetch(event.request);
-      })
+    fetch(event.request)
+      .catch(() => caches.match(event.request))
   );
 });

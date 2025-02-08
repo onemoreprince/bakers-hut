@@ -1,55 +1,3 @@
-/* main.js */
-
-// Replace with your own Supabase project credentials
-const SUPABASE_URL = 'https://tejxhpolghqoudmldqnc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlanhocG9sZ2hxb3VkbWxkcW5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg2OTMwNTksImV4cCI6MjA1NDI2OTA1OX0.IrCv-9pCAJ4AUqsvYVNkxogP7xkvY4iSRfNCrxz9WfA';
-
-
-// Initialize the Supabase client
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// --- Authentication (Magic Link Login) ---
-
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('login-form');
-  const loginMessage = document.getElementById('login-message');
-
-  // Handle login form submission
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const { error } = await supabaseClient.auth.signInWithOtp({ email });
-    if (error) {
-      loginMessage.textContent = error.message;
-    } else {
-      loginMessage.textContent = 'Magic link sent! Please check your email.';
-    }
-  });
-
-  // Check if a session already exists
-  supabaseClient.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
-      onUserLoggedIn();
-    }
-  });
-
-  // Listen for auth state changes (e.g. after clicking the magic link)
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (session) {
-      onUserLoggedIn();
-    } else {
-      document.getElementById('auth-section').style.display = 'block';
-    }
-  });
-});
-
-// Called when the user is logged in: hide the login section and auto‑load the Items tab.
-function onUserLoggedIn() {
-  document.getElementById('auth-section').style.display = 'none';
-  // Auto‑load the Items view by “clicking” the button programmatically.
-  document.getElementById('items-tab').click();
-}
-
 // --- HTMX & Supabase Data Functions ---
 
 // After HTMX swaps in new content, determine which view has loaded.
@@ -68,7 +16,7 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 
 // Function to load all items into the Items table (unchanged from before)
 async function loadItems() {
-  const { data, error } = await supabaseClient
+  const { data, error } = await window.supabaseClient
     .from('items')
     .select('*');
   if (error) {
@@ -90,7 +38,7 @@ async function loadItems() {
   });
 }
 
-// Attach the submission listener for the “Add New Item” form.
+// Attach the submission listener for the "Add New Item" form.
 function attachAddItemFormListener() {
   const form = document.getElementById('add-item-form');
   if (form) {
@@ -105,7 +53,7 @@ function attachAddItemFormListener() {
         category: formData.get('category')
       };
 
-      const { error } = await supabaseClient
+      const { error } = await window.supabaseClient
         .from('items')
         .insert(newItem);
       if (error) {
@@ -123,7 +71,7 @@ function attachAddItemFormListener() {
 
 // Load available items (id and name) into the Stock In view.
 function loadStockInItems() {
-  supabaseClient
+  window.supabaseClient
     .from('items')
     .select('id, name')
     .then(({ data, error }) => {
@@ -169,7 +117,7 @@ function attachStockInFormListener() {
         alert("Please enter quantity for at least one item.");
         return;
       }
-      const { error } = await supabaseClient
+      const { error } = await window.supabaseClient
         .from('restock')
         .insert([{ items_added: itemsAdded }]);
       if (error) {
@@ -186,14 +134,101 @@ function attachStockInFormListener() {
 }
 
 // --- Service Worker Registration for PWA ---
-
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker registered with scope: ', registration.scope);
-      }).catch(err => {
-        console.error('Service Worker registration failed: ', err);
-      });
-  });
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered with scope: ', registration.scope);
+            }).catch(err => {
+                console.error('Service Worker registration failed: ', err);
+            });
+    });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Add this debug code
+    document.body.addEventListener('click', (e) => {
+        console.log('Click detected on:', e.target);
+    });
+
+    // Test HTMX loading
+    console.log('HTMX loaded:', typeof htmx !== 'undefined');
+    
+    // Ensure HTMX is loaded before making any AJAX calls
+    if (typeof htmx !== 'undefined') {
+        // Optional: Enable HTMX logging during development
+        // htmx.logAll();
+        
+        // Load default view (sales) only if content section exists
+        const contentSection = document.getElementById('content');
+        if (contentSection) {
+            htmx.ajax('GET', '/views/sales.html', '#content');
+        }
+    } else {
+        console.error('HTMX is not loaded properly');
+    }
+
+    // Theme switcher
+    const themeController = document.querySelector('.theme-controller');
+    if (themeController) {
+        // Check for saved theme preference or default to 'light'
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeController.checked = savedTheme === 'dark';
+
+        // Add event listener with immediate effect
+        themeController.addEventListener('change', (e) => {
+            const newTheme = e.target.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+});
+
+// HTMX loading indicator
+htmx.config.indicator = '.htmx-indicator';
+
+// Update the current view title when content changes
+document.body.addEventListener('htmx:afterSwap', (event) => {
+    const currentViewElement = document.getElementById('current-view');
+    if (!currentViewElement) return;
+    
+    // Extract view name from the request path
+    const path = event.detail.requestConfig?.path;
+    if (!path) return;
+    
+    // Get the view name from the path and capitalize it
+    const viewName = path
+        .split('/')
+        .pop()
+        .replace('.html', '')
+        .charAt(0)
+        .toUpperCase() + 
+        path
+        .split('/')
+        .pop()
+        .replace('.html', '')
+        .slice(1);
+    
+    currentViewElement.textContent = viewName;
+});
+
+// Debug logging during development
+htmx.logAll();
+
+// Add loading indicator handlers
+document.body.addEventListener('htmx:beforeRequest', function(evt) {
+    const indicator = document.querySelector('.htmx-indicator');
+    if (indicator) {
+        indicator.classList.remove('opacity-0');
+        indicator.classList.add('opacity-100');
+    }
+});
+
+document.body.addEventListener('htmx:afterRequest', function(evt) {
+    const indicator = document.querySelector('.htmx-indicator');
+    if (indicator) {
+        indicator.classList.add('opacity-0');
+        indicator.classList.remove('opacity-100');
+    }
+}); 
