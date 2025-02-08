@@ -1,7 +1,7 @@
 {
     "name": "Baker's Hut Inventory",
     "short_name": "Baker's Hut",
-    "start_url": ".",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#f7f7f7",
     "theme_color": "#8B4513",

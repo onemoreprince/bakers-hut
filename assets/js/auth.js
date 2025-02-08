@@ -72,6 +72,6 @@ function onUserLoggedIn() {
     authSection.classList.add('hidden');
     contentSection.classList.remove('hidden');
     
-    // Load default view
-    htmx.ajax('GET', '/views/sales.html', '#content');
+    // Load default view with correct relative path
+    htmx.ajax('GET', './views/sales.html', '#content');
 } 

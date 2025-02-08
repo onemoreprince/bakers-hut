@@ -1,0 +1,41 @@
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold">Expenses</h2>
+        <button class="btn btn-primary"
+                hx-get="./views/partials/expense-form.html"
+                hx-target="#modal-content"
+                onclick="window.modal.showModal()">
+            Add Expense
+        </button>
+    </div>
+
+    <div class="stats shadow w-full">
+        <div class="stat">
+            <div class="stat-title">Today's Expenses</div>
+            <div class="stat-value" id="today-expenses">$0.00</div>
+        </div>
+        <div class="stat">
+            <div class="stat-title">This Month</div>
+            <div class="stat-value" id="month-expenses">$0.00</div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="expenses-table-body">
+                <tr>
+                    <td colspan="5" class="text-center">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

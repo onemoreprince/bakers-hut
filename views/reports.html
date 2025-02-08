@@ -1,0 +1,47 @@
+<div class="space-y-4">
+    <h2 class="text-2xl font-bold">Reports</h2>
+
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="stat bg-base-100 shadow">
+            <div class="stat-title">Total Sales</div>
+            <div class="stat-value" id="total-sales">$0.00</div>
+            <div class="stat-desc">This Month</div>
+        </div>
+        
+        <div class="stat bg-base-100 shadow">
+            <div class="stat-title">Total Expenses</div>
+            <div class="stat-value text-error" id="total-expenses">$0.00</div>
+            <div class="stat-desc">This Month</div>
+        </div>
+        
+        <div class="stat bg-base-100 shadow">
+            <div class="stat-title">Net Profit</div>
+            <div class="stat-value text-success" id="net-profit">$0.00</div>
+            <div class="stat-desc">This Month</div>
+        </div>
+    </div>
+
+    <div class="divider">Sales Chart</div>
+    <div class="h-[300px] bg-base-100 shadow rounded-box p-4">
+        <!-- Chart will be rendered here -->
+        <div id="sales-chart" class="w-full h-full"></div>
+    </div>
+
+    <div class="divider">Top Selling Items</div>
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity Sold</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody id="top-items">
+                <tr>
+                    <td colspan="3" class="text-center">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

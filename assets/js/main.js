@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Load default view (sales) only if content section exists
         const contentSection = document.getElementById('content');
         if (contentSection) {
-            htmx.ajax('GET', '/views/sales.html', '#content');
+            htmx.ajax('GET', './views/sales.html', '#content');
         }
     } else {
         console.error('HTMX is not loaded properly');
