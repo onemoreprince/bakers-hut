@@ -10,9 +10,9 @@
   <meta name="theme-color" content="#8B4513" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   
-  <script src="/assets/external/tailwind.js"></script>
-  <link rel="stylesheet" href="/assets/external/daisyui.css" />
-  <script src="assets/external/htmx.min.js"></script>
+  <script src="./assets/external/tailwind.js"></script>
+  <link rel="stylesheet" href="./assets/external/daisyui.css" />
+  <script src="./assets/external/htmx.min.js"></script>
 </head>
 <body class="min-h-screen bg-base-100">
   <!-- Top Navbar -->
@@ -52,7 +52,7 @@
 
   <!-- Bottom Navigation -->
   <nav class="dock fixed bottom-0 bg-base-200 z-50 w-full">
-    <button hx-get="views/items.html" 
+    <button hx-get="./views/items.html" 
             hx-target="#content" 
             hx-indicator=".htmx-indicator"
             class="htmx-request">
