@@ -69,38 +69,84 @@ function attachAddItemFormListener() {
 
 // --- Stock In Functions ---
 
-// Load available items (id and name) into the Stock In view.
-function loadStockInItems() {
-  window.supabaseClient
-    .from('items')
-    .select('id, name, current_stock')
-    .then(({ data, error }) => {
-      if (error) {
-        console.error('Error fetching items for stock-in:', error);
-        return;
-      }
-      const container = document.getElementById('stockin-items-list');
-      container.innerHTML = data.map(item => `
-        <tr>
-          <td>${item.name}</td>
-          <td>
-            <div class="badge ${item.current_stock > 10 ? 'badge-success' : 'badge-warning'}">
-              ${item.current_stock || 0}
-            </div>
-          </td>
-          <td>
-            <input type="number" 
-                   id="item-${item.id}" 
-                   name="item-${item.id}" 
-                   class="input input-bordered w-24" 
-                   min="0" 
-                   value="0">
-          </td>
-        </tr>
-      `).join('');
-    });
+// Add this function to load items with categories
+async function loadStockInItems() {
+    try {
+        const { data: items, error: itemsError } = await window.supabaseClient
+            .from('items')
+            .select(`
+                id,
+                name,
+                unit,
+                item_category_id,
+                item_category:item_category_id (name)
+            `)
+            .order('name');
+
+        if (itemsError) throw itemsError;
+
+        const container = document.getElementById('stockin-items-list');
+        container.innerHTML = items.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td>
+                    <div class="badge badge-ghost">
+                        ${item.item_category?.name || 'Uncategorized'}
+                    </div>
+                </td>
+                <td>
+                    <div class="badge badge-neutral">
+                        ${item.unit}
+                    </div>
+                </td>
+                <td>
+                    <input type="number" 
+                           id="item-${item.id}" 
+                           name="item-${item.id}" 
+                           class="input input-bordered w-24" 
+                           min="0" 
+                           value="0">
+                </td>
+            </tr>
+        `).join('');
+
+        // Load restock history
+        loadRestockHistory();
+    } catch (error) {
+        console.error('Error loading stock items:', error);
+    }
 }
 
+// Add this function to load restock history
+async function loadRestockHistory() {
+    try {
+        const { data: restocks, error } = await window.supabaseClient
+            .from('restock')
+            .select('*')
+            .order('stock_added_at', { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        const tbody = document.getElementById('restock-history');
+        tbody.innerHTML = restocks.map(restock => {
+            const itemCount = restock.items_added.length;
+            const itemsSummary = restock.items_added
+                .map(item => `${item.quantity} units`)
+                .join(', ');
+
+            return `
+                <tr>
+                    <td>${new Date(restock.stock_added_at).toLocaleString()}</td>
+                    <td>${itemsSummary}</td>
+                    <td>${itemCount} items</td>
+                </tr>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error loading restock history:', error);
+    }
+}
 
 // Attach the submission listener for the Stock In form.
 function attachStockInFormListener() {

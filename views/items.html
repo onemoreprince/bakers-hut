@@ -5,11 +5,11 @@
                placeholder="Search items..." 
                class="input input-bordered w-full sm:w-64"
                hx-trigger="keyup changed delay:500ms"
-               hx-get="/api/items/search"
+               hx-get="./api/items/search"
                hx-target="#items-list">
         
         <select class="select select-bordered w-full sm:w-48"
-                hx-get="/api/items/filter"
+                hx-get="./api/items/filter"
                 hx-target="#items-list">
             <option value="">All Categories</option>
             <option value="bread">Bread</option>
@@ -38,7 +38,7 @@
 
     <!-- Add Item Button -->
     <button class="btn btn-primary"
-            hx-get="/views/partials/item-form.html"
+            hx-get="./views/partials/item-form.html"
             hx-target="#modal-content"
             onclick="window.modal.showModal()">
         Add New Item

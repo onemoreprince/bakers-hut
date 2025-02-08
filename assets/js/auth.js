@@ -11,25 +11,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Check existing session
     const { data: { session }, error: sessionError } = await window.supabaseClient.auth.getSession();
+    
     if (sessionError) {
         console.error('Error checking session:', sessionError);
+        showAuthSection();
     } else if (session) {
-        // Hide auth section and show content immediately if session exists
-        authSection.classList.add('hidden');
-        contentSection.classList.remove('hidden');
-        htmx.ajax('GET', './views/sales.html', '#content');
+        showContentSection();
+    } else {
+        showAuthSection();
     }
 
     // Handle auth state changes
     window.supabaseClient.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN') {
-            onUserLoggedIn();
+            showContentSection();
         } else if (event === 'SIGNED_OUT') {
-            authSection.classList.remove('hidden');
-            contentSection.classList.add('hidden');
+            showAuthSection();
         }
     });
-    
+
+    function showAuthSection() {
+        authSection.classList.remove('hidden');
+        contentSection.classList.add('hidden');
+    }
+
+    function showContentSection() {
+        authSection.classList.add('hidden');
+        contentSection.classList.remove('hidden');
+        htmx.ajax('GET', './views/sales.html', '#content');
+    }
+
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -66,15 +77,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-});
-
-function onUserLoggedIn() {
-    const authSection = document.getElementById('auth-section');
-    const contentSection = document.getElementById('content');
-    
-    authSection.classList.add('hidden');
-    contentSection.classList.remove('hidden');
-    
-    // Load default view with correct relative path
-    htmx.ajax('GET', './views/sales.html', '#content');
-} 
+}); 

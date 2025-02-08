@@ -70,13 +70,13 @@ function renderItemsList(items) {
             <td>
                 <div class="flex gap-2">
                     <button class="btn btn-sm btn-ghost"
-                            hx-get="/views/partials/item-form.html?id=${item.id}"
+                            hx-get="./views/partials/item-form.html?id=${item.id}"
                             hx-target="#modal-content"
                             onclick="window.modal.showModal()">
                         ✏️
                     </button>
                     <button class="btn btn-sm btn-ghost text-error"
-                            hx-delete="/api/items/${item.id}"
+                            hx-delete="./api/items/${item.id}"
                             hx-confirm="Are you sure you want to delete this item?"
                             hx-target="#items-list">
                         🗑️
