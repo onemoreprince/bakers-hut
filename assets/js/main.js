@@ -73,24 +73,31 @@ function attachAddItemFormListener() {
 function loadStockInItems() {
   window.supabaseClient
     .from('items')
-    .select('id, name')
+    .select('id, name, current_stock')
     .then(({ data, error }) => {
       if (error) {
         console.error('Error fetching items for stock-in:', error);
         return;
       }
       const container = document.getElementById('stockin-items-list');
-      container.innerHTML = ''; // Clear container
-      data.forEach(item => {
-        // For each item, create a label and a number input for quantity.
-        const div = document.createElement('div');
-        div.classList.add('stockin-item');
-        div.innerHTML = `
-          <label for="item-${item.id}">${item.name}</label>
-          <input type="number" id="item-${item.id}" name="item-${item.id}" placeholder="Quantity" min="0" value="0">
-        `;
-        container.appendChild(div);
-      });
+      container.innerHTML = data.map(item => `
+        <tr>
+          <td>${item.name}</td>
+          <td>
+            <div class="badge ${item.current_stock > 10 ? 'badge-success' : 'badge-warning'}">
+              ${item.current_stock || 0}
+            </div>
+          </td>
+          <td>
+            <input type="number" 
+                   id="item-${item.id}" 
+                   name="item-${item.id}" 
+                   class="input input-bordered w-24" 
+                   min="0" 
+                   value="0">
+          </td>
+        </tr>
+      `).join('');
     });
 }
 

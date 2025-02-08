@@ -1,16 +1,32 @@
-<div class="space-y-4">
-    <h2 class="text-2xl font-bold">Stock Management</h2>
+<div class="space-y-6">
+    <h2 class="text-2xl font-bold mb-6">Stock Management</h2>
     
     <form id="stockin-form" class="card bg-base-100 shadow-xl">
         <div class="card-body">
-            <h3 class="card-title">Add Stock</h3>
+            <h3 class="card-title text-xl mb-4">Add Stock</h3>
             
-            <div id="stockin-items-list" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <!-- Items will be loaded here dynamically -->
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Current Stock</th>
+                            <th>Add Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockin-items-list">
+                        <tr>
+                            <td colspan="3" class="text-center">
+                                <span class="loading loading-spinner loading-md"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <div class="card-actions justify-end mt-4">
+            <div class="card-actions justify-end mt-6">
                 <button type="submit" class="btn btn-primary">
+                    <span class="text-xl mr-2">📦</span>
                     Save Stock Entry
                 </button>
             </div>
@@ -26,11 +42,14 @@
                     <th>Date</th>
                     <th>Items</th>
                     <th>Added By</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="restock-history">
                 <tr>
-                    <td colspan="3" class="text-center">Loading...</td>
+                    <td colspan="4" class="text-center">
+                        <span class="loading loading-spinner loading-md"></span>
+                    </td>
                 </tr>
             </tbody>
         </table>

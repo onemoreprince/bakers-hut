@@ -14,7 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (sessionError) {
         console.error('Error checking session:', sessionError);
     } else if (session) {
-        onUserLoggedIn();
+        // Hide auth section and show content immediately if session exists
+        authSection.classList.add('hidden');
+        contentSection.classList.remove('hidden');
+        htmx.ajax('GET', './views/sales.html', '#content');
     }
 
     // Handle auth state changes
