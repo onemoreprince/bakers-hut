@@ -1,6 +1,6 @@
 <div class="p-4">
     <h3 class="text-lg font-bold mb-4" id="form-title">Add New Item</h3>
-    <form id="item-form" class="space-y-4" hx-post="/api/items" hx-target="#items-table">
+    <form id="item-form" class="space-y-4" onsubmit="handleItemForm(this); return false;">
         <input type="hidden" name="id" id="item-id">
         
         <div class="form-control">
@@ -44,8 +44,12 @@
         </div>
 
         <div class="modal-action">
-            <button type="submit" class="btn btn-primary">Save Item</button>
+            <button type="submit" class="btn btn-primary">
+                <span class="htmx-indicator loading loading-spinner loading-sm"></span>
+                Save Item
+            </button>
             <button type="button" class="btn" onclick="modal.close()">Cancel</button>
         </div>
+        <div id="form-error" class="alert alert-error mt-4 hidden"></div>
     </form>
 </div>
