@@ -191,6 +191,8 @@ async function handleItemForm(form) {
 // Load categories into form
 async function loadCategoriesIntoForm() {
   const categorySelect = document.getElementById('item-category');
+  const itemId = document.getElementById('item-id')?.value;
+  
   if (categorySelect) {
     try {
       const { data: categories, error } = await window.supabaseClient
@@ -200,9 +202,21 @@ async function loadCategoriesIntoForm() {
 
       if (error) throw error;
       
-      categorySelect.innerHTML = categories.map(cat => 
+      let options = '<option disabled selected>Select category</option>';
+      options += categories.map(cat => 
         `<option value="${cat.id}">${cat.name}</option>`
       ).join('');
+      
+      categorySelect.innerHTML = options;
+
+      // If editing, set the correct category
+      if (itemId) {
+        const row = document.querySelector(`tr[onclick*="editItem(${itemId})"]`);
+        if (row) {
+          const item = JSON.parse(row.dataset.item);
+          categorySelect.value = item.item_category_id;
+        }
+      }
     } catch (error) {
       console.error('Error loading categories:', error);
     }

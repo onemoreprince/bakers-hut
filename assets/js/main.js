@@ -33,16 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Click detected on:', e.target);
     });
 
-    // HTMX initialization
-    if (typeof htmx !== 'undefined') {
-        const contentSection = document.getElementById('content');
-        if (contentSection && contentSection.innerHTML.trim() === '') {
-            htmx.ajax('GET', './views/sales.html', '#content');
-        }
-    } else {
-        console.error('HTMX is not loaded properly');
-    }
-
     // Theme switcher
     const themeController = document.querySelector('.theme-controller');
     if (themeController) {
@@ -75,5 +65,14 @@ document.body.addEventListener('htmx:afterRequest', function(evt) {
     if (indicator) {
         indicator.classList.add('opacity-0');
         indicator.classList.remove('opacity-100');
+    }
+});
+
+// Update current view title
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    const contentSection = evt.detail.target;
+    if (contentSection.id === 'content') {
+        const viewTitle = contentSection.querySelector('h2')?.textContent || '';
+        document.getElementById('current-view').textContent = viewTitle;
     }
 }); 
