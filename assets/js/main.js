@@ -3,10 +3,14 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
   if (document.getElementById('items-table')) {
     window.loadItems();
     window.attachAddItemFormListener();
+    window.initItemsView();
   }
   if (document.getElementById('stockin-items-list')) {
     window.loadStockInItems();
     window.attachStockInFormListener();
+  }
+  if (document.getElementById('item-category')) {
+    window.loadCategoriesIntoForm();
   }
 });
 

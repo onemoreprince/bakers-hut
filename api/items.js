@@ -108,8 +108,103 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+async function loadItemsTable() {
+  try {
+    // First get categories ordered by sequence
+    const { data: categories, error: catError } = await window.supabaseClient
+      .from('item_category')
+      .select('*')
+      .order('sequence');
+
+    if (catError) throw catError;
+
+    // Then get items with their categories
+    const { data: items, error: itemError } = await window.supabaseClient
+      .from('items')
+      .select(`
+        *,
+        item_category:item_category_id (name)
+      `)
+      .order('name');
+
+    if (itemError) throw itemError;
+
+    // Group items by category
+    const groupedItems = {};
+    categories.forEach(cat => {
+      groupedItems[cat.id] = items.filter(item => item.item_category_id === cat.id);
+    });
+
+    // Generate HTML
+    let html = '';
+    categories.forEach(category => {
+      html += `
+        <thead>
+          <tr>
+            <th>${category.name}</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      const categoryItems = groupedItems[category.id] || [];
+      if (categoryItems.length === 0) {
+        html += `
+          <tr>
+            <td class="text-gray-500">No items in this category</td>
+          </tr>
+        `;
+      } else {
+        categoryItems.forEach(item => {
+          html += `
+            <tr class="hover:bg-base-300 cursor-pointer"
+                onclick="editItem(${item.id})"
+                data-item='${JSON.stringify(item)}'>
+              <td>${item.name}</td>
+            </tr>
+          `;
+        });
+      }
+
+      html += '</tbody>';
+    });
+
+    return html;
+  } catch (error) {
+    console.error('Error loading items:', error);
+    return `
+      <tr>
+        <td class="text-error">Error loading items: ${error.message}</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadCategories() {
+  const { data, error } = await window.supabaseClient
+    .from('item_category')
+    .select('*')
+    .order('sequence');
+
+  if (error) throw error;
+  return data;
+}
+
+async function handleItemSave(item) {
+  const { data, error } = await window.supabaseClient
+    .from('items')
+    .upsert(item)
+    .select();
+
+  if (error) throw error;
+  return data;
+}
+
 // Export the handlers
 module.exports = {
     handleItemSearch,
-    handleItemFilter
+    handleItemFilter,
+    loadItemsTable,
+    loadCategories,
+    handleItemSave
 }; 

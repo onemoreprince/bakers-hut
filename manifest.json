@@ -3,8 +3,8 @@
     "short_name": "Baker's Hut",
     "start_url": "./index.html",
     "display": "standalone",
-    "background_color": "#f7f7f7",
-    "theme_color": "#8B4513",
+    "background_color": "#5654E7",
+    "theme_color": "#5654E7",
     "icons": [
       {
         "src": "./icons/icon-192.png",
